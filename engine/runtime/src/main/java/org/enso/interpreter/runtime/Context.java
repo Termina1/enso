@@ -46,6 +46,7 @@ public class Context {
   private final ThreadManager threadManager;
   private final ResourceManager resourceManager;
   private final boolean isCachingDisabled;
+  private final boolean isAutomaticParallelismEnabled;
   private final Builtins builtins;
   private final String home;
 
@@ -65,11 +66,13 @@ public class Context {
     this.threadManager = new ThreadManager();
     this.resourceManager = new ResourceManager(this);
     this.isCachingDisabled = environment.getOptions().get(RuntimeOptions.DISABLE_INLINE_CACHES_KEY);
+    this.isAutomaticParallelismEnabled =
+        environment.getOptions().get(RuntimeOptions.ENABLE_AUTO_PARALLELISM_KEY);
     this.home = home;
 
     builtins = new Builtins(this);
 
-    this.compiler = new Compiler(this, builtins);
+    this.compiler = new Compiler(this, builtins, this.isAutomaticParallelismEnabled);
   }
 
   /** Perform expensive initialization logic for the context. */
@@ -326,5 +329,8 @@ public class Context {
     return isCachingDisabled;
   }
 
-
+  /** @return whether the automated parallelism discovery should be enabled for this context. */
+  public boolean isAutomaticParallelismEnabled() {
+    return isAutomaticParallelismEnabled;
+  }
 }
