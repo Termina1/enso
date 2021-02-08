@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.enso.compiler.Compiler;
+import org.enso.compiler.data.CompilerConfig;
 import org.enso.home.HomeManager;
 import org.enso.interpreter.Language;
 import org.enso.interpreter.OptionsHelper;
@@ -46,9 +47,9 @@ public class Context {
   private final ThreadManager threadManager;
   private final ResourceManager resourceManager;
   private final boolean isCachingDisabled;
-  private final boolean isAutomaticParallelismEnabled;
   private final Builtins builtins;
   private final String home;
+  private final CompilerConfig compilerConfig;
 
   /**
    * Creates a new Enso context.
@@ -66,13 +67,14 @@ public class Context {
     this.threadManager = new ThreadManager();
     this.resourceManager = new ResourceManager(this);
     this.isCachingDisabled = environment.getOptions().get(RuntimeOptions.DISABLE_INLINE_CACHES_KEY);
-    this.isAutomaticParallelismEnabled =
+    var isAutomaticParallelismEnabled =
         environment.getOptions().get(RuntimeOptions.ENABLE_AUTO_PARALLELISM_KEY);
+    this.compilerConfig = new CompilerConfig(isAutomaticParallelismEnabled, true);
     this.home = home;
 
     builtins = new Builtins(this);
 
-    this.compiler = new Compiler(this, builtins, this.isAutomaticParallelismEnabled);
+    this.compiler = new Compiler(this, builtins, compilerConfig);
   }
 
   /** Perform expensive initialization logic for the context. */
@@ -329,8 +331,8 @@ public class Context {
     return isCachingDisabled;
   }
 
-  /** @return whether the automated parallelism discovery should be enabled for this context. */
-  public boolean isAutomaticParallelismEnabled() {
-    return isAutomaticParallelismEnabled;
+  /** @return the compiler configuration for this language */
+  public CompilerConfig getCompilerConfig() {
+    return compilerConfig;
   }
 }
