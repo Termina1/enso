@@ -1308,7 +1308,8 @@ lazy val database = project
   .settings(
     autoScalaLibrary := false,
     libraryDependencies ++= Seq(
-      "org.xerial" % "sqlite-jdbc" % "3.34.0"
+      "org.xerial"     % "sqlite-jdbc" % "3.34.0",
+      "org.postgresql" % "postgresql"  % "42.2.19"
     ),
     Compile / packageBin := Def.task {
       val result = (Compile / packageBin).value
