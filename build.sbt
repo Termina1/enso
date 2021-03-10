@@ -1307,6 +1307,8 @@ lazy val database = project
   .in(file("database"))
   .settings(
     autoScalaLibrary := false,
+    Compile / packageBin / artifactPath :=
+      `database-polyglot-root` / "database.jar",
     libraryDependencies ++= Seq(
       "org.xerial"     % "sqlite-jdbc" % "3.34.0",
       "org.postgresql" % "postgresql"  % "42.2.19"
@@ -1316,7 +1318,7 @@ lazy val database = project
       val _ = StdBits
         .copyDependencies(
           `database-polyglot-root`,
-          None,
+          Some("database.jar"),
           ignoreScalaLibrary = true
         )
         .value
